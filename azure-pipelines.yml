@@ -1,0 +1,29 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main   # or master, depending on your default branch
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- task: NodeTool@0
+  inputs:
+    versionSpec: '22.x'   # match the runtime we used
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+    npm run build   # (optional – the sample repo has no build step)
+  displayName: 'npm install & build'
+
+- task: AzureWebApp@1
+  inputs:
+    azureSubscription: '$(azureSubscription)'
+    appType: 'webAppLinux'
+    appName: '$(webAppName)'   # we'll set this below
+    package: '.'   # deploy the whole repo
+  displayName: 'Deploy to Azure Web App'
